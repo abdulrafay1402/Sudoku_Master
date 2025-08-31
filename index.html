@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Sudoku Generator & Solver</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div class="welcome-screen animate__animated animate__fadeIn">
+        <h1 class="welcome-title animate__animated animate__pulse animate__infinite">Sudoku Master</h1>
+        <p class="welcome-subtitle">Generate, Solve, and Play Sudoku Puzzles</p>
+        <button class="start-btn" onclick="startApp()">
+            <i class="fas fa-play"></i> Start Playing
+        </button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Sudoku Master</h1>
+            <p class="subtitle">Generate, Solve, and Play Sudoku Puzzles</p>
+        </header>
+
+        <div class="main-content hidden" id="app">
+            <div class="controls">
+                <div class="control-group">
+                    <h3 class="control-title"><i class="fas fa-cog"></i> Game Settings</h3>
+                    <div class="size-selector">
+                        <button class="size-btn active" data-size="4">
+                            <i class="fas fa-grid"></i> 4x4
+                        </button>
+                        <button class="size-btn" data-size="9">
+                            <i class="fas fa-grid"></i> 9x9
+                        </button>
+                        <button class="size-btn desktop-only" data-size="16">
+                            <i class="fas fa-grid"></i> 16x16
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3 class="control-title"><i class="fas fa-gamepad"></i> Difficulty</h3>
+                    <button class="btn btn-easy"><i class="fas fa-leaf"></i> Easy</button>
+                    <button class="btn btn-medium"><i class="fas fa-balance-scale"></i> Medium</button>
+                    <button class="btn btn-hard"><i class="fas fa-fire"></i> Hard</button>
+                    <button class="btn btn-expert"><i class="fas fa-skull"></i> Expert</button>
+                </div>
+
+                <div class="control-group">
+                    <h3 class="control-title"><i class="fas fa-magic"></i> Actions</h3>
+                    <button class="btn btn-generate"><i class="fas fa-plus-circle"></i> Generate New</button>
+                    <button class="btn btn-solve"><i class="fas fa-lightbulb"></i> Solve Puzzle</button>
+                    <button class="btn btn-check"><i class="fas fa-check-circle"></i> Check Solution</button>
+                    <button class="btn btn-clear"><i class="fas fa-trash"></i> Clear Grid</button>
+                </div>
+            </div>
+
+            <div class="sudoku-area">
+                <div class="sudoku-container">
+                    <div class="sudoku-grid" id="grid"></div>
+                </div>
+
+                <div class="game-info">
+                    <div class="timer">
+                        <i class="fas fa-clock"></i> Time
+                        <div class="value" id="time">00:00</div>
+                    </div>
+                    <div class="score">
+                        <i class="fas fa-star"></i> Score
+                        <div class="value" id="score">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions hidden" id="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Each row must contain all numbers from 1 to N (where N is grid size) without repetition</li>
+                <li><i class="fas fa-check-circle"></i> Each column must contain all numbers from 1 to N without repetition</li>
+                <li><i class="fas fa-check-circle"></i> Each subgrid (√N x √N) must contain all numbers from 1 to N without repetition</li>
+                <li><i class="fas fa-mouse-pointer"></i> Click on a cell to select it, then type a number to fill it</li>
+                <li><i class="fas fa-backspace"></i> Press Delete or Backspace to clear a cell</li>
+            </ul>
+        </div>
+
+        <footer class="hidden" id="footer">
+    <p>Sudoku Master © 2025 | Made by <a href="https://github.com/abdulrafay1402" target="_blank" style="color: var(--accent); text-decoration: none;">abdulrafay</a></p>
+    <p>Connect with me: 
+        <a href="mailto:abdulrafay14021997@gmail.com" style="color: var(--accent); text-decoration: none;">
+            <i class="fas fa-envelope"></i> Email
+        </a> | 
+        <a href="https://github.com/abdulrafay1402" target="_blank" style="color: var(--accent); text-decoration: none;">
+            <i class="fab fa-github"></i> GitHub
+        </a>
+    </p>
+</footer>
+
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
