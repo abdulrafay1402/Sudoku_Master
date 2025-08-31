@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="style.css">
-    
 </head>
+
 <body>
     <div class="welcome-screen animate__animated animate__fadeIn">
         <h1 class="welcome-title animate__animated animate__pulse animate__infinite">Sudoku Master</h1>
@@ -16,6 +17,10 @@
         <button class="start-btn" onclick="startApp()">
             <i class="fas fa-play"></i> Start Playing
         </button>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notification-text"></span>
     </div>
 
     <div class="container">
@@ -79,27 +84,31 @@
         <div class="instructions hidden" id="instructions">
             <h3><i class="fas fa-info-circle"></i> How to Play</h3>
             <ul>
-                <li><i class="fas fa-check-circle"></i> Each row must contain all numbers from 1 to N (where N is grid size) without repetition</li>
-                <li><i class="fas fa-check-circle"></i> Each column must contain all numbers from 1 to N without repetition</li>
-                <li><i class="fas fa-check-circle"></i> Each subgrid (√N x √N) must contain all numbers from 1 to N without repetition</li>
-                <li><i class="fas fa-mouse-pointer"></i> Click on a cell to select it, then type a number to fill it</li>
+                <li><i class="fas fa-check-circle"></i> Each row must contain all numbers from 1 to N (where N is grid
+                    size) without repetition</li>
+                <li><i class="fas fa-check-circle"></i> Each column must contain all numbers from 1 to N without
+                    repetition</li>
+                <li><i class="fas fa-check-circle"></i> Each subgrid (√N x √N) must contain all numbers from 1 to N
+                    without repetition</li>
+                <li><i class="fas fa-mouse-pointer"></i> Click on a cell to select it, then type a number to fill it
+                </li>
                 <li><i class="fas fa-backspace"></i> Press Delete or Backspace to clear a cell</li>
             </ul>
         </div>
 
         <footer class="hidden" id="footer">
-    <p>Sudoku Master © 2025 | Made by <a href="https://github.com/abdulrafay1402" target="_blank" style="color: var(--accent); text-decoration: none;">abdulrafay</a></p>
-    <p>Connect with me: 
-        <a href="mailto:abdulrafay14021997@gmail.com" style="color: var(--accent); text-decoration: none;">
-            <i class="fas fa-envelope"></i> Email
-        </a> | 
-        <a href="https://github.com/abdulrafay1402" target="_blank" style="color: var(--accent); text-decoration: none;">
-            <i class="fab fa-github"></i> GitHub
-        </a>
-    </p>
-</footer>
+            <p>Sudoku Master © 2025 | Created with <i class="fas fa-heart" style="color: var(--accent);"></i> by Abdul
+                Rafay</p>
+            <p>
+                Connect with me:
+                <a href="https://github.com/abdulrafay1402" target="_blank"><i class="fab fa-github"></i> GitHub</a> |
+                <a href="mailto:abdulrafay14021997@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+            </p>
+        </footer>
 
     </div>
+
     <script src="app.js"></script>
 </body>
+
 </html>

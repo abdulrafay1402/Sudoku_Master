@@ -1,3 +1,4 @@
+
 // DOM elements
 const gridContainer = document.getElementById('grid');
 const sizeButtons = document.querySelectorAll('.size-btn');
@@ -8,6 +9,8 @@ const checkButton = document.querySelector('.btn-check');
 const difficultyButtons = document.querySelectorAll('.btn');
 const timerElement = document.getElementById('time');
 const scoreElement = document.getElementById('score');
+const notification = document.getElementById('notification');
+const notificationText = document.getElementById('notification-text');
 
 // Game state
 let gridSize = 9;
@@ -15,6 +18,8 @@ let selectedCell = null;
 let startTime = null;
 let timerInterval = null;
 let score = 0;
+let solution = [];
+let currentPuzzle = [];
 
 // Initialize the app
 function init() {
@@ -118,7 +123,7 @@ function selectCell(cell) {
 
 // Handle keyboard input
 function handleKeyPress(e) {
-    if (!selectedCell) return;
+    if (!selectedCell || selectedCell.classList.contains('fixed')) return;
 
     const key = e.key;
 
@@ -141,6 +146,141 @@ function handleKeyPress(e) {
     }
 }
 
+// Show notification
+function showNotification(message, isError = false) {
+    notificationText.textContent = message;
+    notification.classList.remove('error');
+
+    if (isError) {
+        notification.classList.add('error');
+    }
+
+    notification.classList.add('show');
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+// Check if a value is safe in a position
+function isSafe(board, row, col, num) {
+    // Check row
+    for (let i = 0; i < gridSize; i++) {
+        if (board[row][i] === num) return false;
+    }
+
+    // Check column
+    for (let i = 0; i < gridSize; i++) {
+        if (board[i][col] === num) return false;
+    }
+
+    // Check subgrid
+    const subSize = Math.sqrt(gridSize);
+    const startRow = Math.floor(row / subSize) * subSize;
+    const startCol = Math.floor(col / subSize) * subSize;
+
+    for (let i = 0; i < subSize; i++) {
+        for (let j = 0; j < subSize; j++) {
+            if (board[startRow + i][startCol + j] === num) return false;
+        }
+    }
+
+    return true;
+}
+
+// Solve the Sudoku using backtracking
+function solveSudoku(board) {
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            if (board[row][col] === 0) {
+                for (let num = 1; num <= gridSize; num++) {
+                    if (isSafe(board, row, col, num)) {
+                        board[row][col] = num;
+
+                        if (solveSudoku(board)) {
+                            return true;
+                        }
+
+                        board[row][col] = 0;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// Generate a valid Sudoku puzzle
+function generateValidPuzzle(difficulty) {
+    // Create an empty grid
+    let grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
+
+    // Fill the diagonal subgrids
+    const subSize = Math.sqrt(gridSize);
+    for (let i = 0; i < gridSize; i += subSize) {
+        fillSubgrid(grid, i, i);
+    }
+
+    // Solve the complete grid
+    solveSudoku(grid);
+
+    // Store the solution
+    solution = JSON.parse(JSON.stringify(grid));
+
+    // Based on difficulty, remove numbers
+    let cellsToRemove;
+    switch (difficulty) {
+        case 'easy':
+            cellsToRemove = Math.floor(gridSize * gridSize * 0.4);
+            break;
+        case 'medium':
+            cellsToRemove = Math.floor(gridSize * gridSize * 0.5);
+            break;
+        case 'hard':
+            cellsToRemove = Math.floor(gridSize * gridSize * 0.6);
+            break;
+        case 'expert':
+            cellsToRemove = Math.floor(gridSize * gridSize * 0.7);
+            break;
+        default:
+            cellsToRemove = Math.floor(gridSize * gridSize * 0.5);
+    }
+
+    // Remove numbers to create the puzzle
+    let removed = 0;
+    while (removed < cellsToRemove) {
+        const row = Math.floor(Math.random() * gridSize);
+        const col = Math.floor(Math.random() * gridSize);
+
+        if (grid[row][col] !== 0) {
+            grid[row][col] = 0;
+            removed++;
+        }
+    }
+
+    return grid;
+}
+
+// Fill a subgrid with random numbers
+function fillSubgrid(grid, row, col) {
+    const subSize = Math.sqrt(gridSize);
+    const numbers = Array.from({ length: gridSize }, (_, i) => i + 1);
+
+    // Shuffle the numbers
+    for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+
+    // Fill the subgrid
+    for (let i = 0; i < subSize; i++) {
+        for (let j = 0; j < subSize; j++) {
+            grid[row + i][col + j] = numbers[i * subSize + j];
+        }
+    }
+}
+
 // Generate a new puzzle
 function generatePuzzle(difficulty = 'medium') {
     // Clear the grid completely before generating a new puzzle
@@ -149,79 +289,42 @@ function generatePuzzle(difficulty = 'medium') {
         cell.textContent = '';
         cell.classList.remove('fixed', 'user-input', 'error', 'selected');
     });
-    
+
     selectedCell = null;
 
-    let fillCount;
+    // Generate a valid puzzle
+    currentPuzzle = generateValidPuzzle(difficulty);
 
-    switch (difficulty) {
-        case 'easy':
-            fillCount = Math.floor(gridSize * gridSize * 0.5);
-            break;
-        case 'medium':
-            fillCount = Math.floor(gridSize * gridSize * 0.4);
-            break;
-        case 'hard':
-            fillCount = Math.floor(gridSize * gridSize * 0.3);
-            break;
-        case 'expert':
-            fillCount = Math.floor(gridSize * gridSize * 0.25);
-            break;
-        default:
-            fillCount = Math.floor(gridSize * gridSize * 0.4);
-    }
-
-    for (let i = 0; i < fillCount; i++) {
-        const randomIndex = Math.floor(Math.random() * cells.length);
-        let randomValue;
-
-        if (gridSize === 4) {
-            randomValue = Math.floor(Math.random() * 4) + 1;
-        } else if (gridSize === 9) {
-            randomValue = Math.floor(Math.random() * 9) + 1;
-        } else if (gridSize === 16) {
-            randomValue = (Math.floor(Math.random() * 16) + 1).toString(16).toUpperCase();
-        }
-
-        // Make sure we don't overwrite a cell that already has a value
-        if (!cells[randomIndex].textContent) {
-            cells[randomIndex].textContent = randomValue;
-            cells[randomIndex].classList.add('fixed');
-        } else {
-            // If the cell already has a value, try again
-            i--;
+    // Display the puzzle
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const index = row * gridSize + col;
+            if (currentPuzzle[row][col] !== 0) {
+                cells[index].textContent = currentPuzzle[row][col];
+                cells[index].classList.add('fixed');
+            }
         }
     }
 
     startTimer();
+    showNotification(`New ${difficulty} puzzle generated!`);
 }
 
 // Solve the puzzle
 function solvePuzzle() {
-    // In a real implementation, this would solve the puzzle
-    // For this example, we'll just fill all cells with valid numbers
-
     const cells = document.querySelectorAll('.cell');
 
-    cells.forEach(cell => {
-        if (!cell.textContent) {
-            let value;
-
-            if (gridSize === 4) {
-                value = Math.floor(Math.random() * 4) + 1;
-            } else if (gridSize === 9) {
-                value = Math.floor(Math.random() * 9) + 1;
-            } else if (gridSize === 16) {
-                value = (Math.floor(Math.random() * 16) + 1).toString(16).toUpperCase();
-            }
-
-            cell.textContent = value;
-            cell.classList.remove('user-input', 'error');
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const index = row * gridSize + col;
+            cells[index].textContent = solution[row][col];
+            cells[index].classList.remove('user-input', 'error');
         }
-    });
+    }
 
     stopTimer();
     updateScore(1000); // Bonus for solving
+    showNotification('Puzzle solved!');
 }
 
 // Check the solution
@@ -229,19 +332,39 @@ function checkSolution() {
     const cells = document.querySelectorAll('.cell');
     let hasErrors = false;
 
-    // Simple validation - just mark empty cells as errors for demo
-    cells.forEach(cell => {
-        if (!cell.textContent) {
-            cell.classList.add('error');
-            hasErrors = true;
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            const index = row * gridSize + col;
+            const cellValue = cells[index].textContent ? parseInt(cells[index].textContent) : 0;
+
+            if (cellValue !== solution[row][col]) {
+                cells[index].classList.add('error');
+                hasErrors = true;
+            } else {
+                cells[index].classList.remove('error');
+            }
         }
-    });
+    }
 
     if (!hasErrors) {
-        alert('Congratulations! Your solution is correct!');
-        updateScore(500);
+        // Check if the puzzle is complete
+        let isComplete = true;
+        for (let i = 0; i < cells.length; i++) {
+            if (!cells[i].textContent) {
+                isComplete = false;
+                break;
+            }
+        }
+
+        if (isComplete) {
+            showNotification('Congratulations! Your solution is correct!');
+            updateScore(500);
+            stopTimer();
+        } else {
+            showNotification('So far so good! Keep going!');
+        }
     } else {
-        alert('There are errors in your solution. Please check again.');
+        showNotification('There are errors in your solution. Please check again.', true);
     }
 }
 
@@ -250,14 +373,15 @@ function clearGrid() {
     const cells = document.querySelectorAll('.cell');
 
     cells.forEach(cell => {
-        cell.textContent = '';
-        cell.classList.remove('fixed', 'user-input', 'error', 'selected');
+        if (!cell.classList.contains('fixed')) {
+            cell.textContent = '';
+            cell.classList.remove('user-input', 'error');
+        }
     });
-    
-    selectedCell = null;
 
     stopTimer();
     timerElement.textContent = '00:00';
+    showNotification('Grid cleared!');
 }
 
 // Start the timer
