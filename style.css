@@ -465,3 +465,43 @@ footer {
 .notification.error {
     background: var(--danger);
 }
+  .footer {
+    background: #111;
+    color: bisque;
+    text-align: center;
+    padding: 15px;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    border-top: 2px solid var(--accent);
+  }
+
+  .footer i {
+    color: var(--accent);
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .footer .author {
+    font-weight: bold;
+    color: var(--accent);
+  }
+
+  .footer-link {
+    text-decoration: none;
+    color: bisque;
+    margin: 0 5px;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .footer-link:hover {
+    color: var(--accent);
+    transform: scale(1.1);
+  }
+
+  .footer-link i {
+    margin-right: 4px;
+  }
+
+  .footer-link:hover i {
+    transform: rotate(15deg);
+    color: var(--accent);
+  }
