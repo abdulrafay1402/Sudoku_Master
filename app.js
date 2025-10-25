@@ -1,5 +1,3 @@
-
-// DOM elements
 const gridContainer = document.getElementById('grid');
 const sizeButtons = document.querySelectorAll('.size-btn');
 const generateButton = document.querySelector('.btn-generate');
@@ -12,7 +10,15 @@ const scoreElement = document.getElementById('score');
 const notification = document.getElementById('notification');
 const notificationText = document.getElementById('notification-text');
 
-// Game state
+const hiddenInput = document.createElement('input');
+hiddenInput.type = 'text';
+hiddenInput.inputMode = 'numeric';
+hiddenInput.style.position = 'fixed';
+hiddenInput.style.opacity = '0';
+hiddenInput.style.pointerEvents = 'none';
+hiddenInput.maxLength = '1';
+document.body.appendChild(hiddenInput);
+
 let gridSize = 9;
 let selectedCell = null;
 let startTime = null;
@@ -21,27 +27,22 @@ let score = 0;
 let solution = [];
 let currentPuzzle = [];
 
-// Initialize the app
 function init() {
     createGrid(gridSize);
     setupEventListeners();
 }
 
-// Create the Sudoku grid
 function createGrid(size) {
     gridContainer.innerHTML = '';
     gridSize = size;
 
-    // Set grid template based on size
     gridContainer.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
 
-    // Create cells
     for (let i = 0; i < size * size; i++) {
         const cell = document.createElement('div');
         cell.className = 'cell';
         cell.dataset.index = i;
 
-        // Add thicker borders for subgrids
         const subgridSize = Math.sqrt(size);
         const row = Math.floor(i / size);
         const col = i % size;
@@ -58,12 +59,9 @@ function createGrid(size) {
     }
 }
 
-// Set up event listeners
 function setupEventListeners() {
-    // Grid size selection
     sizeButtons.forEach(button => {
         button.addEventListener('click', () => {
-            // Check if 16x16 is being selected on mobile
             if (button.dataset.size === '16' && window.innerWidth <= 768) {
                 alert('16x16 puzzles are only available on desktop devices.');
                 return;
@@ -75,19 +73,11 @@ function setupEventListeners() {
         });
     });
 
-    // Generate new puzzle
     generateButton.addEventListener('click', generatePuzzle);
-
-    // Solve puzzle
     solveButton.addEventListener('click', solvePuzzle);
-
-    // Check solution
     checkButton.addEventListener('click', checkSolution);
-
-    // Clear grid
     clearButton.addEventListener('click', clearGrid);
 
-    // Difficulty selection
     difficultyButtons.forEach(button => {
         if (button.classList.contains('btn-easy')) {
             button.addEventListener('click', () => generatePuzzle('easy'));
@@ -100,18 +90,31 @@ function setupEventListeners() {
         }
     });
 
-    // Cell selection
     gridContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('cell')) {
             selectCell(e.target);
+            hiddenInput.focus();
         }
     });
 
-    // Keyboard input
     document.addEventListener('keydown', handleKeyPress);
-}
 
-// Select a cell
+    hiddenInput.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (value) {
+            handleMobileInput(value);
+            e.target.value = '';
+        }
+    });
+
+    hiddenInput.addEventListener('keydown', (e) => {
+        if ((e.key === 'Backspace' || e.key === 'Delete') && selectedCell && !selectedCell.classList.contains('fixed')) {
+            selectedCell.textContent = '';
+            selectedCell.classList.remove('user-input', 'error');
+            e.target.value = '';
+        }
+    });
+}
 function selectCell(cell) {
     if (selectedCell) {
         selectedCell.classList.remove('selected');
@@ -121,13 +124,11 @@ function selectCell(cell) {
     cell.classList.add('selected');
 }
 
-// Handle keyboard input
 function handleKeyPress(e) {
     if (!selectedCell || selectedCell.classList.contains('fixed')) return;
 
     const key = e.key;
 
-    // Number input
     if (/[1-9]/.test(key) && gridSize >= 9) {
         selectedCell.textContent = key;
         selectedCell.classList.add('user-input');
@@ -146,7 +147,26 @@ function handleKeyPress(e) {
     }
 }
 
-// Show notification
+function handleMobileInput(value) {
+    if (!selectedCell || selectedCell.classList.contains('fixed')) return;
+
+    const key = value.toUpperCase();
+
+    if (/[1-9]/.test(key) && gridSize >= 9) {
+        selectedCell.textContent = key;
+        selectedCell.classList.add('user-input');
+        selectedCell.classList.remove('error');
+    } else if (/[1-4]/.test(key) && gridSize === 4) {
+        selectedCell.textContent = key;
+        selectedCell.classList.add('user-input');
+        selectedCell.classList.remove('error');
+    } else if (/[1-9A-G]/.test(key) && gridSize === 16) {
+        selectedCell.textContent = key;
+        selectedCell.classList.add('user-input');
+        selectedCell.classList.remove('error');
+    }
+}
+
 function showNotification(message, isError = false) {
     notificationText.textContent = message;
     notification.classList.remove('error');
@@ -162,19 +182,15 @@ function showNotification(message, isError = false) {
     }, 3000);
 }
 
-// Check if a value is safe in a position
 function isSafe(board, row, col, num) {
-    // Check row
     for (let i = 0; i < gridSize; i++) {
         if (board[row][i] === num) return false;
     }
 
-    // Check column
     for (let i = 0; i < gridSize; i++) {
         if (board[i][col] === num) return false;
     }
 
-    // Check subgrid
     const subSize = Math.sqrt(gridSize);
     const startRow = Math.floor(row / subSize) * subSize;
     const startCol = Math.floor(col / subSize) * subSize;
@@ -188,7 +204,6 @@ function isSafe(board, row, col, num) {
     return true;
 }
 
-// Solve the Sudoku using backtracking
 function solveSudoku(board) {
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
@@ -211,24 +226,16 @@ function solveSudoku(board) {
     return true;
 }
 
-// Generate a valid Sudoku puzzle
 function generateValidPuzzle(difficulty) {
-    // Create an empty grid
     let grid = Array(gridSize).fill().map(() => Array(gridSize).fill(0));
 
-    // Fill the diagonal subgrids
     const subSize = Math.sqrt(gridSize);
     for (let i = 0; i < gridSize; i += subSize) {
         fillSubgrid(grid, i, i);
     }
 
-    // Solve the complete grid
     solveSudoku(grid);
-
-    // Store the solution
     solution = JSON.parse(JSON.stringify(grid));
-
-    // Based on difficulty, remove numbers
     let cellsToRemove;
     switch (difficulty) {
         case 'easy':
@@ -246,8 +253,6 @@ function generateValidPuzzle(difficulty) {
         default:
             cellsToRemove = Math.floor(gridSize * gridSize * 0.5);
     }
-
-    // Remove numbers to create the puzzle
     let removed = 0;
     while (removed < cellsToRemove) {
         const row = Math.floor(Math.random() * gridSize);
@@ -262,28 +267,22 @@ function generateValidPuzzle(difficulty) {
     return grid;
 }
 
-// Fill a subgrid with random numbers
 function fillSubgrid(grid, row, col) {
     const subSize = Math.sqrt(gridSize);
     const numbers = Array.from({ length: gridSize }, (_, i) => i + 1);
 
-    // Shuffle the numbers
     for (let i = numbers.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
     }
 
-    // Fill the subgrid
     for (let i = 0; i < subSize; i++) {
         for (let j = 0; j < subSize; j++) {
             grid[row + i][col + j] = numbers[i * subSize + j];
         }
     }
 }
-
-// Generate a new puzzle
 function generatePuzzle(difficulty = 'medium') {
-    // Clear the grid completely before generating a new puzzle
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
         cell.textContent = '';
@@ -292,10 +291,8 @@ function generatePuzzle(difficulty = 'medium') {
 
     selectedCell = null;
 
-    // Generate a valid puzzle
     currentPuzzle = generateValidPuzzle(difficulty);
 
-    // Display the puzzle
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             const index = row * gridSize + col;
@@ -307,10 +304,9 @@ function generatePuzzle(difficulty = 'medium') {
     }
 
     startTimer();
-    showNotification(`New ${difficulty} puzzle generated!`);
+    showNotification(`Puzzle generated!`);
 }
 
-// Solve the puzzle
 function solvePuzzle() {
     const cells = document.querySelectorAll('.cell');
 
@@ -323,11 +319,9 @@ function solvePuzzle() {
     }
 
     stopTimer();
-    updateScore(1000); // Bonus for solving
+    updateScore(1000); 
     showNotification('Puzzle solved!');
 }
-
-// Check the solution
 function checkSolution() {
     const cells = document.querySelectorAll('.cell');
     let hasErrors = false;
@@ -347,7 +341,6 @@ function checkSolution() {
     }
 
     if (!hasErrors) {
-        // Check if the puzzle is complete
         let isComplete = true;
         for (let i = 0; i < cells.length; i++) {
             if (!cells[i].textContent) {
@@ -368,7 +361,6 @@ function checkSolution() {
     }
 }
 
-// Clear the grid
 function clearGrid() {
     const cells = document.querySelectorAll('.cell');
 
@@ -384,7 +376,6 @@ function clearGrid() {
     showNotification('Grid cleared!');
 }
 
-// Start the timer
 function startTimer() {
     stopTimer();
     startTime = new Date();
@@ -400,7 +391,6 @@ function startTimer() {
     }, 1000);
 }
 
-// Stop the timer
 function stopTimer() {
     if (timerInterval) {
         clearInterval(timerInterval);
@@ -408,13 +398,11 @@ function stopTimer() {
     }
 }
 
-// Update score
 function updateScore(points) {
     score += points;
     scoreElement.textContent = score;
 }
 
-// Start the app
 function startApp() {
     document.querySelector('.welcome-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -424,12 +412,9 @@ function startApp() {
     init();
 }
 
-// Check if device is mobile
 function isMobile() {
     return window.innerWidth <= 768;
 }
-
-// Initialize on load
 window.addEventListener('load', () => {
     if (isMobile()) {
         document.querySelector('[data-size="16"]').classList.add('disabled');

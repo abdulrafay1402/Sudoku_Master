@@ -258,6 +258,63 @@ h1 {
     margin-top: 5px;
 }
 
+.instructions {
+    margin-top: 30px;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 900px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.instructions h3 {
+    margin-bottom: 25px;
+    color: white;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.instructions ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.instructions li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    max-width: 700px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.instructions li:hover {
+    background: rgba(76, 201, 240, 0.15);
+    transform: translateX(5px);
+}
+
+.instructions i {
+    color: var(--success);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
 footer {
     margin-top: 40px;
     text-align: center;
@@ -267,113 +324,47 @@ footer {
     width: 100%;
 }
 
-.instructions {
-    margin-top: 30px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 20px;
-    max-width: 800px;
-    width: 100%;
+.footer {
+    background: #111;
+    color: bisque;
+    text-align: center;
+    padding: 15px;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    border-top: 2px solid var(--accent);
 }
 
-.instructions h3 {
-    margin-bottom: 15px;
-    color: var(--light);
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.footer i {
+    color: var(--accent);
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.instructions ul {
-    list-style-type: none;
-    padding-left: 20px;
+.footer .author {
+    font-weight: bold;
+    color: var(--accent);
 }
 
-.instructions li {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+.footer-link {
+    text-decoration: none;
+    color: bisque;
+    margin: 0 5px;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.instructions i {
-    color: var(--success);
-    margin-top: 4px;
+.footer-link:hover {
+    color: var(--accent);
+    transform: scale(1.1);
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .main-content {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .controls {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    .cell {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-    }
+.footer-link i {
+    margin-right: 4px;
 }
 
-@media (max-width: 768px) {
-    .main-content {
-        grid-template-columns: 1fr;
-    }
-
-    .controls {
-        width: 100%;
-    }
-
-    .cell {
-        width: 35px;
-        height: 35px;
-        font-size: 1.1rem;
-    }
-
-    h1 {
-        font-size: 2.5rem;
-    }
-
-    .btn {
-        padding: 10px;
-    }
-
-    .size-selector {
-        grid-template-columns: 1fr;
-    }
+.footer-link:hover i {
+    transform: rotate(15deg);
+    color: var(--accent);
 }
 
-@media (max-width: 480px) {
-    .cell {
-        width: 30px;
-        height: 30px;
-        font-size: 0.9rem;
-    }
-
-    h1 {
-        font-size: 2rem;
-    }
-
-    .btn {
-        padding: 8px;
-        font-size: 0.9rem;
-    }
-
-    .game-info {
-        flex-direction: column;
-    }
-}
-
-/* Animation for the start */
 .welcome-screen {
     position: fixed;
     top: 0;
@@ -429,20 +420,6 @@ footer {
     display: flex;
 }
 
-@media (max-width: 768px) {
-    .desktop-only {
-        display: none;
-    }
-
-    .welcome-title {
-        font-size: 2.5rem;
-    }
-
-    .welcome-subtitle {
-        font-size: 1.2rem;
-    }
-}
-
 .notification {
     position: fixed;
     top: 20px;
@@ -465,43 +442,83 @@ footer {
 .notification.error {
     background: var(--danger);
 }
-  .footer {
-    background: #111;
-    color: bisque;
-    text-align: center;
-    padding: 15px;
-    font-family: "Poppins", sans-serif;
-    font-size: 14px;
-    border-top: 2px solid var(--accent);
-  }
 
-  .footer i {
-    color: var(--accent);
-    transition: transform 0.3s ease, color 0.3s ease;
-  }
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 
-  .footer .author {
-    font-weight: bold;
-    color: var(--accent);
-  }
+    .controls {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
 
-  .footer-link {
-    text-decoration: none;
-    color: bisque;
-    margin: 0 5px;
-    transition: color 0.3s ease, transform 0.3s ease;
-  }
+    .cell {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
 
-  .footer-link:hover {
-    color: var(--accent);
-    transform: scale(1.1);
-  }
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
 
-  .footer-link i {
-    margin-right: 4px;
-  }
+    .controls {
+        width: 100%;
+    }
 
-  .footer-link:hover i {
-    transform: rotate(15deg);
-    color: var(--accent);
-  }
+    .cell {
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .btn {
+        padding: 10px;
+    }
+
+    .size-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cell {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .btn {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .game-info {
+        flex-direction: column;
+    }
+}
